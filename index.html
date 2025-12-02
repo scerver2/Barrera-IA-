@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <title>Barrera amb IA + Arduino – Multi-model</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Llibreria de Teachable Machine (model d'imatge) -->
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f4ff, #fdfbff);
+      --panel-bg: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: #e0ecff;
+      --accent-strong: #1d4ed8;
+      --border-soft: #dde3f0;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --ok: #16a34a;
+      --error: #dc2626;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem 0.75rem;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .app-header {
+      background: var(--panel-bg);
+      border-radius: 24px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      border: 1px solid var(--border-soft);
+    }
+
+    .app-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+    }
+
+    .app-title-block h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .app-badge {
+      font-size: 0.75rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .app-subtitle {
+      margin: 0.2rem 0 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .app-logo-block {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .app-logo-block img {
+      height: 56px;
+      width: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: #f9fafb;
+    }
+
+    .logo-text {
+      font-size: 0.8rem;
+      line-height: 1.3;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .logo-text strong {
+      color: var(--text-main);
+    }
+
+    .panels-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .panels-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .app-logo-block {
+        margin-left: 0;
+        align-self: stretch;
+        justify-content: flex-start;
+      }
+      .logo-text {
+        text-align: left;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-soft);
+    }
+
+    .panel h2 {
+      margin: 0 0 0.4rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .panel h2 span.emoji {
+      font-size: 1.2rem;
+    }
+
+    .panel p {
+      margin: 0.15rem 0 0.6rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.4rem 0.5rem;
+      margin-top: 0.2rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      font-size: 0.9rem;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      background: #ffffff;
+    }
+
+    select {
+      padding: 0.4rem 0.5rem;
+      margin-top: 0.25rem;
+      min-width: 260px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      font-size: 0.9rem;
+      background: #f9fafb;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      background: #ffffff;
+    }
+
+    button {
+      padding: 0.45rem 0.9rem;
+      margin: 0.35rem 0.2rem 0.35rem 0;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    button.secondary {
+      background: white;
+      color: var(--accent);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status {
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    .status-ok {
+      color: var(--ok);
+    }
+
+    .status-error {
+      color: var(--error);
+    }
+
+    .status-info {
+      color: var(--text-muted);
+    }
+
+    .models-list {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      padding-top: 0.4rem;
+      border-top: 1px dashed #e5e7eb;
+    }
+
+    #webcam-container {
+      margin-top: 0.6rem;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      background: #111827;
+    }
+
+    #webcam-container canvas {
+      display: block;
+      width: 100%;
+    }
+
+    #label-container {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      background: #f9fafb;
+      border-radius: var(--radius-md);
+      padding: 0.4rem 0.5rem;
+      border: 1px dashed #e5e7eb;
+    }
+
+    #currentClass {
+      margin-top: 0.45rem;
+      font-size: 0.9rem;
+    }
+
+    #currentClass strong {
+      color: var(--accent-strong);
+    }
+
+    .small-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .serial-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      margin-top: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <!-- CAPÇALERA -->
+    <header class="app-header">
+      <div class="app-icon">🛡️</div>
+      <div class="app-title-block">
+        <h1>
+          Barrera amb IA + Arduino
+          <span class="app-badge">4t ESO · Projecte amb Teachable Machine</span>
+        </h1>
+        <p class="app-subtitle">
+          Entreneu el vostre propi model de visió per controlar una barrera amb un servo i un LED,
+          utilitzant <strong>gestos amb el braç</strong> i <strong>Arduino</strong>.
+        </p>
+      </div>
+      <div class="app-logo-block">
+        <img src="logo_ffg.png" alt="Logo Institut Francesc Ferrer i Guàrdia">
+        <div class="logo-text">
+          <strong>Institut Francesc Ferrer i Guàrdia</strong><br>
+          Projecte desenvolupat pel docent:<br>
+          <strong>Salvador Cervera</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="panels-grid">
+      <!-- COLUMNA ESQUERRA: MODELS -->
+      <div class="panel">
+        <h2><span class="emoji">🧠</span> 1. Afegir i carregar models dels grups</h2>
+        <p>
+          A Teachable Machine ves a
+          <em>Export Model → TensorFlow.js → Upload (hosted)</em>
+          i copia la URL (acaba en <code>/</code>). Escriu també el nom del vostre grup.
+        </p>
+
+        <label for="modelNameInput">Nom del grup / model</label>
+        <input
+          type="text"
+          id="modelNameInput"
+          placeholder="Exemple: Grup 1, Grup A-Barrera..."
+        />
+
+        <label for="modelURLInput">URL del model de Teachable Machine</label>
+        <input
+          type="text"
+          id="modelURLInput"
+          placeholder="https://teachablemachine.withgoogle.com/models/XXXXX/"
+        />
+
+        <button id="addModelBtn">➕ Afegir model a la llista</button>
+        <div id="modelListStatus" class="status status-info"></div>
+
+        <div class="models-list">
+          <label for="modelSelector">Models disponibles</label>
+          <select id="modelSelector">
+            <option value="">— Encara no hi ha models afegits —</option>
+          </select>
+          <button id="loadSelectedModelBtn" class="secondary" disabled>📥 Carregar model seleccionat</button>
+          <div id="modelStatus" class="status"></div>
+        </div>
+      </div>
+
+      <!-- COLUMNA DRETA: SÈRIE + CONTROL IA -->
+      <div>
+        <div class="panel">
+          <h2><span class="emoji">🔌</span> 2. Connectar amb l'Arduino</h2>
+          <p>
+            Connecta l'Arduino per USB i després dona permís al navegador.
+          </p>
+          <div class="serial-pill">
+            🧪 Web Serial · Navegador recomanat: <strong>Chrome / Edge</strong>
+          </div>
+
+          <div style="margin-top: 0.5rem;">
+            <button id="connectSerialBtn">🔗 Connectar Arduino</button>
+            <button id="disconnectSerialBtn" class="secondary" disabled>❌ Desconnectar Arduino</button>
+          </div>
+          <div id="serialStatus" class="status"></div>
+        </div>
+
+        <div class="panel" style="margin-top: 1rem;">
+          <h2><span class="emoji">📷</span> 3. Iniciar IA + Webcam</h2>
+          <p>
+            Quan el model estiga carregat i l'Arduino connectat, polsa
+            <strong>Iniciar IA + Webcam</strong>. Si les classes es diuen
+            <em>"Repos"</em> i <em>"Activar"</em>, la pàgina enviarà les lletres
+            <code>R</code> i <code>A</code> a l'Arduino.
+          </p>
+
+          <button id="startBtn" disabled>▶️ Iniciar IA + Webcam</button>
+          <button id="stopBtn" class="secondary" disabled>⏸️ Aturar IA</button>
+          <div id="iaStatus" class="status"></div>
+          <p class="small-note">
+            💡 Recorda: col·loca't davant de la càmera amb bona llum i fes gestos clars.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANELL INFERIOR: WEBCAM + RESULTATS -->
+    <section class="panel" style="margin-top: 1rem;">
+      <h2><span class="emoji">🎛️</span> 4. Vista de la càmera i detecció</h2>
+      <p>
+        A sota veuràs la webcam, les probabilitats de cada classe i la classe considerada com a
+        <strong>"guanyadora"</strong>, que és la que envia l'ordre a l'Arduino.
+      </p>
+
+      <div id="webcam-container"></div>
+      <div id="label-container"></div>
+      <div id="currentClass" class="status"></div>
+    </section>
+  </main>
+
+  <script>
+    // ---------- VARIABLES GLOBALS ----------
+    let models = [];            // { name, baseURL }
+    let model = null;           // Model de TM carregat
+    let webcam = null;
+    let maxPredictions = 0;
+    let loopRequestId = null;
+
+    let port = null;
+    let writer = null;
+    let textEncoder = null;
+    let writableStreamClosed = null;
+
+    let lastSent = null;
+    let lastSendTime = 0;
+    const SEND_INTERVAL_MS = 300;
+
+    // ---------- ELEMENTS DEL DOM ----------
+    const modelNameInput        = document.getElementById("modelNameInput");
+    const modelURLInput         = document.getElementById("modelURLInput");
+    const addModelBtn           = document.getElementById("addModelBtn");
+    const modelListStatus       = document.getElementById("modelListStatus");
+
+    const modelSelector         = document.getElementById("modelSelector");
+    const loadSelectedModelBtn  = document.getElementById("loadSelectedModelBtn");
+    const modelStatus           = document.getElementById("modelStatus");
+
+    const connectSerialBtn      = document.getElementById("connectSerialBtn");
+    const disconnectSerialBtn   = document.getElementById("disconnectSerialBtn");
+    const serialStatus          = document.getElementById("serialStatus");
+
+    const startBtn              = document.getElementById("startBtn");
+    const stopBtn               = document.getElementById("stopBtn");
+    const iaStatus              = document.getElementById("iaStatus");
+
+    const webcamContainer       = document.getElementById("webcam-container");
+    const labelContainer        = document.getElementById("label-container");
+    const currentClassDiv       = document.getElementById("currentClass");
+
+    // ---------- UTILITARI STATUS ----------
+    function setStatus(element, message, type) {
+      element.textContent = message || "";
+      element.classList.remove("status-ok", "status-error", "status-info");
+      if (type === "ok") {
+        element.classList.add("status-ok");
+      } else if (type === "error") {
+        element.classList.add("status-error");
+      } else if (type === "info") {
+        element.classList.add("status-info");
+      }
+    }
+
+    // ---------- 1. GESTIÓ DE MODELS (ALUMNES AFEGEIXEN) ----------
+    addModelBtn.addEventListener("click", () => {
+      const name = modelNameInput.value.trim();
+      const url = modelURLInput.value.trim();
+
+      if (!name || !url) {
+        setStatus(modelListStatus, "Cal posar un nom i una URL.", "error");
+        return;
+      }
+
+      const normalizedURL = url.endsWith("/") ? url : url + "/";
+
+      models.push({ name, baseURL: normalizedURL });
+
+      const option = document.createElement("option");
+      option.value = String(models.length - 1);
+      option.textContent = name + " → " + normalizedURL;
+      modelSelector.appendChild(option);
+
+      modelNameInput.value = "";
+      modelURLInput.value = "";
+
+      setStatus(
+        modelListStatus,
+        "Model afegit correctament. Ara tria'l al desplegable i carrega'l.",
+        "ok"
+      );
+
+      if (models.length === 1 && modelSelector.options[0].value === "") {
+        modelSelector.options[0].textContent = "— Tria un model —";
+      }
+
+      loadSelectedModelBtn.disabled = false;
+    });
+
+    loadSelectedModelBtn.addEventListener("click", async () => {
+      const selectedValue = modelSelector.value;
+      if (selectedValue === "") {
+        setStatus(modelStatus, "Tria un model de la llista.", "error");
+        return;
+      }
+
+      const index = parseInt(selectedValue, 10);
+      const selectedModel = models[index];
+      if (!selectedModel) {
+        setStatus(modelStatus, "Model no trobat.", "error");
+        return;
+      }
+
+      await loadModelFromBaseURL(selectedModel.baseURL);
+    });
+
+    async function loadModelFromBaseURL(baseURL) {
+      try {
+        setStatus(modelStatus, "Carregant model de: " + baseURL, "info");
+
+        const modelURL = baseURL + "model.json";
+        const metadataURL = baseURL + "metadata.json";
+
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        labelContainer.innerHTML = "";
+        for (let i = 0; i < maxPredictions; i++) {
+          const div = document.createElement("div");
+          labelContainer.appendChild(div);
+        }
+
+        setStatus(modelStatus, "Model carregat correctament ✅", "ok");
+        startBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        setStatus(modelStatus, "Error carregant el model. Revisa la URL.", "error");
+        startBtn.disabled = true;
+      }
+    }
+
+    // ---------- 2. CONNEXIÓ SÈRIE AMB ARDUINO ----------
+    connectSerialBtn.addEventListener("click", async () => {
+      if (!("serial" in navigator)) {
+        setStatus(
+          serialStatus,
+          "Aquest navegador no suporta Web Serial. Fes servir Chrome o Edge.",
+          "error"
+        );
+        return;
+      }
+
+      try {
+        setStatus(serialStatus, "Obrint connexió sèrie...", "info");
+
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+
+        textEncoder = new TextEncoderStream();
+        writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+        writer = textEncoder.writable.getWriter();
+
+        setStatus(serialStatus, "Arduino connectat ✅", "ok");
+        connectSerialBtn.disabled = true;
+        disconnectSerialBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        setStatus(serialStatus, "No s'ha pogut obrir el port sèrie.", "error");
+      }
+    });
+
+    disconnectSerialBtn.addEventListener("click", async () => {
+      try {
+        if (writer) {
+          await writer.close();
+        }
+        if (writableStreamClosed) {
+          await writableStreamClosed;
+        }
+        if (port) {
+          await port.close();
+        }
+        writer = null;
+        port = null;
+        setStatus(serialStatus, "Connexió sèrie tancada.", "info");
+      } catch (err) {
+        console.error(err);
+        setStatus(serialStatus, "Error en tancar el port sèrie.", "error");
+      } finally {
+        connectSerialBtn.disabled = false;
+        disconnectSerialBtn.disabled = true;
+      }
+    });
+
+    async function sendSerial(letter) {
+      if (!writer) return;
+      const now = Date.now();
+      if (now - lastSendTime < SEND_INTERVAL_MS) return;
+      lastSendTime = now;
+      try {
+        await writer.write(letter + "\n");
+      } catch (err) {
+        console.error("Error enviant per sèrie:", err);
+        setStatus(serialStatus, "Error enviant dades per sèrie.", "error");
+      }
+    }
+
+    // ---------- 3. WEBCAM + IA ----------
+    startBtn.addEventListener("click", async () => {
+      if (!model) {
+        setStatus(iaStatus, "Has de carregar un model abans.", "error");
+        return;
+      }
+
+      try {
+        setStatus(iaStatus, "Iniciant webcam i IA...", "info");
+
+        const flip = true;
+        webcam = new tmImage.Webcam(320, 240, flip);
+
+        await webcam.setup();
+        await webcam.play();
+        webcamContainer.innerHTML = "";
+        webcamContainer.appendChild(webcam.canvas);
+
+        loopRequestId = requestAnimationFrame(loop);
+
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        setStatus(iaStatus, "IA en marxa. Fes els gestos davant de la càmera.", "ok");
+      } catch (err) {
+        console.error(err);
+        setStatus(iaStatus, "No s'ha pogut iniciar la webcam.", "error");
+      }
+    });
+
+    stopBtn.addEventListener("click", async () => {
+      if (loopRequestId) {
+        cancelAnimationFrame(loopRequestId);
+        loopRequestId = null;
+      }
+      if (webcam) {
+        await webcam.stop();
+      }
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      setStatus(iaStatus, "IA aturada.", "info");
+      currentClassDiv.textContent = "";
+    });
+
+    async function loop() {
+      webcam.update();
+      await predict();
+      loopRequestId = requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+      if (!model || !webcam) return;
+
+      const prediction = await model.predict(webcam.canvas);
+
+      let bestClass = null;
+      let bestProb = 0;
+
+      for (let i = 0; i < maxPredictions; i++) {
+        const className = prediction[i].className;
+        const prob = prediction[i].probability;
+        const percent = (prob * 100).toFixed(1) + "%";
+
+        const labelDiv = labelContainer.childNodes[i];
+        labelDiv.textContent = `${className}: ${percent}`;
+
+        if (prob > bestProb) {
+          bestProb = prob;
+          bestClass = className;
+        }
+      }
+
+      if (!bestClass) return;
+
+      currentClassDiv.innerHTML =
+        `Classe detectada: <strong>${bestClass}</strong> (${(bestProb * 100).toFixed(1)}%)`;
+
+      if (!writer) return;
+
+      let toSend = null;
+      const bestLower = bestClass.toLowerCase();
+      if (bestLower === "repos") {
+        toSend = "R";
+      } else if (bestLower === "activar") {
+        toSend = "A";
+      }
+
+      if (toSend && toSend !== lastSent) {
+        lastSent = toSend;
+        await sendSerial(toSend);
+      }
+    }
+  </script>
+</body>
+</html>
