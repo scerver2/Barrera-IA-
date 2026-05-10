@@ -419,20 +419,26 @@
 
   <script>
     // ---------- VARIABLES GLOBALS ----------
-    let models = [];            // { name, baseURL }
-    let model = null;           // Model de TM carregat
-    let webcam = null;
-    let maxPredictions = 0;
-    let loopRequestId = null;
+    // ---------- VARIABLES GLOBALS ----------
+let models = [];            // { name, baseURL }
+let model = null;           // Model de TM carregat
+let webcam = null;
+let maxPredictions = 0;
+let loopRequestId = null;
 
-    let port = null;
-    let writer = null;
-    let textEncoder = null;
-    let writableStreamClosed = null;
+let port = null;
+let writer = null;
+let textEncoder = null;
+let writableStreamClosed = null;
 
-    let lastSent = null;
-    let lastSendTime = 0;
-    const SEND_INTERVAL_MS = 300;
+let lastSent = null;
+let lastSendTime = 0;
+const SEND_INTERVAL_MS = 300;
+
+// NOVES VARIABLES PER A CLASSE ESTABLE
+let stableClass = null;
+let stableCount = 0;
+const STABLE_THRESHOLD = 5; // nombre de frames seguits necessaris
 
     // ---------- ELEMENTS DEL DOM ----------
     const modelNameInput        = document.getElementById("modelNameInput");
@@ -662,47 +668,60 @@
     }
 
     async function predict() {
-      if (!model || !webcam) return;
+  if (!model || !webcam) return;
 
-      const prediction = await model.predict(webcam.canvas);
+  const prediction = await model.predict(webcam.canvas);
 
-      let bestClass = null;
-      let bestProb = 0;
+  let bestClass = null;
+  let bestProb = 0;
 
-      for (let i = 0; i < maxPredictions; i++) {
-        const className = prediction[i].className;
-        const prob = prediction[i].probability;
-        const percent = (prob * 100).toFixed(1) + "%";
+  for (let i = 0; i < maxPredictions; i++) {
+    const className = prediction[i].className;
+    const prob = prediction[i].probability;
+    const percent = (prob * 100).toFixed(1) + "%";
 
-        const labelDiv = labelContainer.childNodes[i];
-        labelDiv.textContent = `${className}: ${percent}`;
+    const labelDiv = labelContainer.childNodes[i];
+    labelDiv.textContent = `${className}: ${percent}`;
 
-        if (prob > bestProb) {
-          bestProb = prob;
-          bestClass = className;
-        }
-      }
-
-      if (!bestClass) return;
-
-      currentClassDiv.innerHTML =
-        `Classe detectada: <strong>${bestClass}</strong> (${(bestProb * 100).toFixed(1)}%)`;
-
-      if (!writer) return;
-
-      let toSend = null;
-      const bestLower = bestClass.toLowerCase();
-      if (bestLower === "repos") {
-        toSend = "R";
-      } else if (bestLower === "activar") {
-        toSend = "A";
-      }
-
-      if (toSend && toSend !== lastSent) {
-        lastSent = toSend;
-        await sendSerial(toSend);
-      }
+    if (prob > bestProb) {
+      bestProb = prob;
+      bestClass = className;
     }
+  }
+
+  if (!bestClass) return;
+
+  currentClassDiv.innerHTML =
+    `Classe detectada: <strong>${bestClass}</strong> (${(bestProb * 100).toFixed(1)}%)`;
+
+  // ACTUALITZAR CLASSE ESTABLE
+  if (bestClass === stableClass) {
+    stableCount++;
+  } else {
+    stableClass = bestClass;
+    stableCount = 1;
+  }
+
+  // Només actuem si porta prou frames igual
+  if (stableCount < STABLE_THRESHOLD) {
+    return; // encara no enviem res a l'Arduino
+  }
+
+  if (!writer) return;
+
+  let toSend = null;
+  const bestLower = stableClass.toLowerCase();
+  if (bestLower === "repos") {
+    toSend = "R";
+  } else if (bestLower === "activar") {
+    toSend = "A";
+  }
+
+  if (toSend && toSend !== lastSent) {
+    lastSent = toSend;
+    await sendSerial(toSend);
+  }
+}
   </script>
 </body>
 </html>
