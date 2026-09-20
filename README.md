@@ -42,7 +42,7 @@ El recurs eXeLearning conté la proposta didàctica completa:
 
 ---
 
-## 🎯 Objectiu del projecte
+## Objectiu del projecte
 
 L'objectiu és que l'alumnat passe de ser consumidor de tecnologia a
 **dissenyar, entrenar, programar i construir un sistema intel·ligent funcional**.
@@ -60,7 +60,7 @@ L'alumnat ha de:
 
 ---
 
-## 🤖 Com funciona?
+## Com funciona?
 
 El sistema integra tres elements principals:
 
@@ -86,7 +86,7 @@ com ara el servomotor que obri o tanca la barrera.
 
 ---
 
-## 🧠 Tecnologies utilitzades
+## Tecnologies utilitzades
 
 - Intel·ligència Artificial
 - Google Teachable Machine
@@ -106,7 +106,7 @@ com ara el servomotor que obri o tanca la barrera.
 
 ---
 
-## 💻 Competència digital de l'alumnat
+## Competència digital de l'alumnat
 
 El projecte permet treballar de manera integrada diferents dimensions de la
 competència digital.
@@ -125,7 +125,7 @@ L'alumnat:
 
 ---
 
-## 🛠️ Metodologia
+## Metodologia
 
 La proposta es desenvolupa mitjançant un enfocament actiu basat en:
 
@@ -143,7 +143,7 @@ assumeix un paper actiu en la construcció de la solució.
 
 ---
 
-## 🔄 Fases del projecte
+## Fases del projecte
 
 El projecte segueix un procés progressiu:
 
@@ -156,7 +156,7 @@ més ampli.
 
 ---
 
-## ♻️ Projecte replicable
+## Projecte replicable
 
 El projecte ha estat dissenyat perquè qualsevol docent o centre educatiu
 puga adaptar-lo al seu context.
@@ -204,7 +204,7 @@ modificar i adaptar la proposta educativa.
 
 ---
 
-## 👨‍🏫 Autoria
+## Autoria
 
 **Salvador Cervera**
 
@@ -234,7 +234,7 @@ respectives llicències.
 
 ---
 
-## 🏫 Finalitat educativa
+## Finalitat educativa
 
 Aquest projecte té finalitat exclusivament educativa i no incorpora
 publicitat ni finalitats comercials.
@@ -278,7 +278,7 @@ El recurso eXeLearning contiene la propuesta didáctica completa:
 
 ---
 
-## 🎯 Objetivo del proyecto
+## Objetivo del proyecto
 
 El objetivo es que el alumnado pase de ser consumidor de tecnología a
 **diseñar, entrenar, programar y construir un sistema inteligente funcional**.
@@ -296,7 +296,7 @@ El alumnado debe:
 
 ---
 
-## 🤖 ¿Cómo funciona?
+## ¿Cómo funciona?
 
 El sistema integra tres elementos principales:
 
@@ -322,7 +322,7 @@ como el servomotor que abre o cierra la barrera.
 
 ---
 
-## 🧠 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - Inteligencia Artificial
 - Google Teachable Machine
@@ -342,7 +342,7 @@ como el servomotor que abre o cierra la barrera.
 
 ---
 
-## 💻 Competencia digital del alumnado
+## Competencia digital del alumnado
 
 El proyecto permite trabajar de manera integrada diferentes dimensiones de la
 competencia digital.
@@ -361,7 +361,7 @@ El alumnado:
 
 ---
 
-## 🛠️ Metodología
+## Metodología
 
 La propuesta se desarrolla mediante un enfoque activo basado en:
 
@@ -379,7 +379,7 @@ asume un papel activo en la construcción de la solución.
 
 ---
 
-## 🔄 Fases del proyecto
+## Fases del proyecto
 
 El proyecto sigue un proceso progresivo:
 
@@ -392,7 +392,7 @@ más amplio.
 
 ---
 
-## ♻️ Proyecto replicable
+## Proyecto replicable
 
 El proyecto ha sido diseñado para que cualquier docente o centro educativo
 pueda adaptarlo a su contexto.
@@ -440,7 +440,7 @@ modificar y adaptar la propuesta educativa.
 
 ---
 
-## 👨‍🏫 Autoría
+## Autoría
 
 **Salvador Cervera**
 
