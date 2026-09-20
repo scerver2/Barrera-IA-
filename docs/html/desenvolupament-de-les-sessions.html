@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ca" id="exe-20260606211209ZIRKEG">
+<head>
+<meta charset="utf-8">
+<meta name="generator" content="eXeLearning v4.0.3">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="license" type="text/html" href="https://creativecommons.org/licenses/by-sa/4.0/">
+<title>Desenvolupament de les sessions | Control barrera automàtica amb IA i arduino </title>
+<link rel="icon" type="image/x-icon" href="../libs/favicon.ico">
+<script>document.querySelector("html").classList.add("js");</script><script src="../libs/jquery/jquery.min.js"> </script><script src="../libs/common_i18n.js"> </script><script src="../libs/common.js"> </script><script src="../libs/exe_export.js"> </script><script>window.exeXapi={"odeId":"20260606164658LXJIRO","packageTitle":"Control barrera automàtica amb IA i arduino ","language":"ca"};</script><script src="../libs/xapi/exe_xapi.js"> </script><script src="../libs/bootstrap/bootstrap.bundle.min.js"> </script><link rel="stylesheet" href="../libs/bootstrap/bootstrap.min.css">
+<script src="../idevices/text/text.js"></script><link rel="stylesheet" href="../idevices/text/text.css">
+<link rel="stylesheet" href="../content/css/base.css"><script src="../theme/style.js"> </script><link rel="stylesheet" href="../theme/style.css">
+<style>
+    .sa-container { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .sa-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .sa-header h1 { font-size: 2.5em; margin-bottom: 10px; }
+    .sa-header p { font-size: 1.2em; opacity: 0.9; }
+    .sa-section { background: white; padding: 30px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .sa-section h2 { color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
+    .sa-section h3 { color: #764ba2; margin-top: 25px; margin-bottom: 15px; font-size: 1.4em; }
+    .info-box { background: #e8eaf6; border-left: 4px solid #667eea; padding: 15px; margin: 15px 0; border-radius: 4px; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 4px; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 4px; }
+    .objectives-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+    .objective-card { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; }
+    .objective-card h4 { color: #667eea; margin-bottom: 10px; }
+    .timeline { position: relative; padding-left: 30px; margin: 20px 0; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #667eea; }
+    .timeline-item { position: relative; margin-bottom: 30px; padding-left: 20px; }
+    .timeline-item::before { content: ''; position: absolute; left: -36px; top: 5px; width: 15px; height: 15px; border-radius: 50%; background: #667eea; border: 3px solid white; }
+    .session-card { background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+    .session-card h4 { color: #764ba2; margin-bottom: 10px; }
+    .materials-list { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 15px 0; }
+    .materials-list ul { margin-left: 20px; margin-top: 10px; }
+    .materials-list li { margin-bottom: 8px; }
+    .sa-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    .sa-table th { background: #667eea; color: white; padding: 12px; text-align: left; }
+    .sa-table td { padding: 12px; border-bottom: 1px solid #ddd; }
+    .sa-table tr:hover { background: #f5f5f5; }
+    .rubric-table th { background: #764ba2; }
+    .competency-badge { display: inline-block; background: #667eea; color: white; padding: 5px 15px; border-radius: 20px; margin: 5px; font-size: 0.9em; }
+    .activity-steps { counter-reset: step-counter; }
+    .activity-step { counter-increment: step-counter; background: #f8f9fa; padding: 15px; margin: 15px 0; border-radius: 8px; position: relative; padding-left: 60px; }
+    .activity-step::before { content: counter(step-counter); position: absolute; left: 15px; top: 15px; background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; }
+    .code-block { background: #2d2d2d; color: #f8f8f2; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; font-family: 'Courier New', monospace; }
+    .accordion { margin: 15px 0; }
+    .accordion-item { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    .accordion-header { background: #f8f9fa; padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .accordion-header:hover { background: #e9ecef; }
+    .accordion-content { padding: 15px; display: none; }
+    .accordion-content.active { display: block; }
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
+    .resource-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border: 2px solid #e0e0e0; transition: transform 0.3s; }
+    .resource-card:hover { transform: translateY(-5px); border-color: #667eea; }
+    .resource-icon { font-size: 3em; margin-bottom: 10px; }
+</style>
+<script>
+    function toggleAccordion(header) {
+        const content = header.nextElementSibling;
+        const arrow = header.querySelector('span:last-child');
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            arrow.textContent = '▼';
+        } else {
+            content.classList.add('active');
+            arrow.textContent = '▲';
+        }
+    }
+</script>
+</head>
+<body class="exe-export exe-web-site">
+<script>document.body.className+=" js"</script>
+<div class="exe-content exe-export pre-js siteNav-hidden"><a href="#20260606211209ZIRKEG" id="skipNav">Skip to content</a> <nav id="siteNav">
+<ul>
+<li class="current-page-parent"> <a href="../index.html" class="main-node daddy">Introducció</a>
+<ul class="other-section">
+<li> <a href="../html/objectius-daprenentatge-competencies-i-sabers.html" class="no-ch">Objectius d´Aprenentatge, Competències i Sabers</a>
+</li>
+<li> <a href="../html/metodologia.html" class="no-ch">Metodologia</a>
+</li>
+<li class="active"> <a href="../html/desenvolupament-de-les-sessions.html" class="active no-ch">Desenvolupament de les sessions</a>
+</li>
+<li> <a href="../html/materials-i-recursos.html" class="no-ch">Materials i recursos</a>
+</li>
+<li> <a href="../html/avaluacio.html" class="no-ch">Avaluació</a>
+</li>
+<li> <a href="../html/atencio-a-la-diversitat.html" class="no-ch">Atenció a la diversitat</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav><main id="20260606211209ZIRKEG" class="page"> 
+<header class="main-header">
+<div class="package-header"><p class="package-title">Control barrera automàtica amb IA i arduino </p></div>
+<div class="page-header"><h1 class="page-title sr-av">Desenvolupament de les sessions</h1></div>
+</header><div id="page-content-20260606211209ZIRKEG" class="page-content">
+<article id="20260606211209KGFRLP" class="box">
+<header class="box-head no-icon">
+<h1 class="box-title">Desenvolupament de les sessions</h1>
+<button class="box-toggle box-toggle-on" title="Toggle content">
+<span>Toggle content</span>
+</button></header>
+<div class="box-content">
+<div id="20260415225008020YS0" class="idevice_node text" data-idevice-path="../idevices/text/" data-idevice-type="text" data-idevice-component-type="json" data-idevice-json-data="{&quot;ideviceId&quot;:&quot;20260415225008020YS0&quot;}">
+<div class="exe-text-template"><div class="textIdeviceContent">
+            <div class="exe-text-activity">
+                <div><style>
+     /* --- 1. ESTILS GENERALS DE LES CAIXES --- */
+    .timeline-item { position: relative; padding-left: 40px; margin-bottom: 30px; border-left: 3px solid #667eea; }
+    .timeline-item::before { content: ''; position: absolute; left: -11px; top: 20px; width: 18px; height: 18px; border-radius: 50%; background: #667eea; border: 3px solid white; }
+    .session-card { background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .session-card h4 { color: #764ba2 !important; margin-top: 0; margin-bottom: 15px; font-size: 1.3em; }
+    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 4px; color: #856404; }
+    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 4px; color: #155724; }
+    .code-block { background: #2d3748; color: #f7fafc; padding: 15px; border-radius: 6px; margin-top: 10px; overflow-x: auto; font-family: monospace; }
+
+    /* --- 2. NOU DISSENY BLINDAT PER A LES PASSES (EL QUE HO ARREGLA) --- */
+    .activity-steps {
+        counter-reset: step-counter;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .activity-step {
+        counter-increment: step-counter;
+        background: #f4f7fb !important;
+        border: 1px solid #e2e8f0 !important;
+        border-left: 5px solid #667eea !important;
+        
+        /* Això és el que força l'espai de 65px a l'esquerra: */
+        padding: 15px 15px 15px 65px !important; 
+        box-sizing: border-box !important;
+        
+        margin: 15px 0 !important;
+        border-radius: 6px !important;
+        position: relative !important; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+        display: block !important; 
+    }
+
+    .activity-step::before {
+        content: counter(step-counter) !important;
+        position: absolute !important; 
+        left: 15px !important; 
+        top: 15px !important; 
+        background: #667eea !important;
+        color: white !important;
+        width: 35px !important;
+        height: 35px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: bold !important;
+        font-size: 1.2em !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        line-height: 1 !important;
+    }
+
+    .activity-step strong {
+        display: block !important;
+        margin-bottom: 5px !important;
+        color: #333 !important;
+        margin-left: 0 !important;
+    }
+
+    .activity-step p {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 1-2: Introducció i Planificació</h4>
+<p><strong>Objectiu:</strong> Presentar el projecte, formar equips i realitzar la planificació inicial.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Presentació del Projecte (20')</strong>
+<p style="margin: 0;">Vídeo inspirador sobre barres automàtiques i sistemes intel·ligents. Discussió sobre aplicacions reals.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Formació d'Equips (15')</strong>
+<p style="margin: 0;">Creació d'equips heterogenis de 3-4 persones. Assignació de rols inicials.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Brainstorming (25')</strong>
+<p style="margin: 0;">Pluja d'idees sobre funcionalitats de la barrera: tipus de sensors, mecanismes, disseny estètic.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Planificació (60')</strong>
+<p style="margin: 0;">Esbós del disseny, llista de materials necessaris, planificació temporal del projecte.</p>
+</div>
+</div>
+<div class="success-box"><strong>Producte de la sessió:</strong> Document de planificació i esbossos inicials del disseny.</div>
+</div>
+</div>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 3-4: Introducció a Arduino</h4>
+<p><strong>Objectiu:</strong> Aprendre els fonaments d'Arduino i la programació bàsica.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Components Arduino (20')</strong>
+<p style="margin: 0;">Identificació de components: placa Arduino, breadboard, cables, LEDs, resistències, sensors.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Primer Circuit (30')</strong>
+<p style="margin: 0;">Muntatge d'un circuit LED simple. Comprensió de connexions digitals i ground.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Programació Bàsica (40')</strong>
+<p style="margin: 0;">Introducció a l'IDE Arduino. Estructura d'un programa: setup() i loop().</p>
+<pre class="code-block"><code>void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
+  delay(1000);
+}</code></pre>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Pràctica amb Sensors (30')</strong>
+<p style="margin: 0;">Lectura de sensors digitals (botons) i analògics (potenciòmetre).</p>
+</div>
+</div>
+<div class="success-box"><strong>Producte de la sessió:</strong> Circuit funcional amb LED i sensor, codi documentat.</div>
+</div>
+</div>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 5-6: Control de Servomotors</h4>
+<p><strong>Objectiu:</strong> Aprendre a controlar servomotors per al moviment de la barrera.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Teoria dels Servomotors (15')</strong>
+<p style="margin: 0;">Com funcionen els servomotors. Diferència entre servos estàndard i continus.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Connexió del Servo (20')</strong>
+<p style="margin: 0;">Muntatge del servomotor: cables de senyal, VCC i GND. Precaucions de seguretat.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Programació del Servo (30')</strong>
+<p style="margin: 0;">Ús de la llibreria Servo.h. Control de posició i velocitat.</p>
+<pre class="code-block"><code>#include &lt;Servo.h&gt;
+
+Servo myServo;
+
+void setup() {
+  myServo.attach(9);
+}
+
+void loop() {
+  myServo.write(0);    // Barrera tancada
+  delay(2000);
+  myServo.write(90);   // Barrera oberta
+  delay(2000);
+}</code></pre>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Prototip de Barrera (55')</strong>
+<p style="margin: 0;">Construcció d'un prototip simple de barrera amb materials reciclats o cartró.</p>
+</div>
+</div>
+<div class="success-box"><strong>Producte de la sessió:</strong> Prototip funcional de barrera controlada amb servomotor.</div>
+</div>
+</div>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 7-8: Integració de Sensors</h4>
+<p><strong>Objectiu:</strong> Afegir sensors per detectar la proximitat de vehicles o obstacles.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Sensors Ultrasònics (25')</strong>
+<p style="margin: 0;">Funcionament del sensor HC-SR04. Càlcul de distàncies amb ones ultrasòniques.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Muntatge i Programació (40')</strong>
+<p style="margin: 0;">Integració del sensor ultrasònic al sistema de la barrera.</p>
+<pre class="code-block"><code>long duration;
+int distance;
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  
+  if (distance &lt; 10) {
+    myServo.write(90);  // Obrir barrera
+  } else {
+    myServo.write(0);   // Tancar barrera
+  }
+}</code></pre>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Proves i Ajustos (25')</strong>
+<p style="margin: 0;">Calibració del sensor. Ajust de distàncies i temps de resposta.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Millores Opcionals (30')</strong>
+<p style="margin: 0;">Afegir LEDs indicadors, buzzer sonor o pantalla LCD amb informació.</p>
+</div>
+</div>
+<div class="success-box"><strong>Producte de la sessió:</strong> Barrera amb detecció automàtica de presència.</div>
+</div>
+</div>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 9-10: Intel·ligència Artificial</h4>
+<p><strong>Objectiu:</strong> Integrar un model d'IA per a control per veu o reconeixement d'imatges.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Introducció a la IA (20')</strong>
+<p style="margin: 0;">Què és la intel·ligència artificial? Machine Learning i Deep Learning. Aplicacions reals.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Teachable Machine (30')</strong>
+<p style="margin: 0;">Introducció a Google Teachable Machine. Creació d'un model de reconeixement d'imatges o àudio.</p>
+<a href="https://teachablemachine.withgoogle.com/" target="_blank" style="display: inline-block; background: #667eea; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; margin-top: 10px; font-family: sans-serif;" rel="noopener">🚀 Obrir Teachable Machine</a></div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Entrenament del Model (35')</strong>
+<p style="margin: 0;">Captura de dades (imatges de cotxes, targetes de proximitat, o comandes de veu). Entrenament i proves del model.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Integració amb Arduino (35')</strong>
+<p style="margin: 0;">Connexió del model d'IA amb Arduino mitjançant comunicació sèrie o Node.js. Processament de prediccions.</p>
+<a href="https://scerver2.github.io/Barrera-IA-/" target="_blank" style="display: inline-block; background: #667eea; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; margin-top: 10px; font-family: sans-serif;" rel="noopener">⚙️ Obrir Web serial Barrera IA</a></div>
+</div>
+<div class="warning-box"><strong>Nota tècnica:</strong> La integració d'IA pot requerir un ordinador intermediari o Raspberry Pi per processar el model i enviar comandes a Arduino via serial.</div>
+<div class="success-box"><strong>Producte de la sessió:</strong> Model d'IA entrenat i integrat al sistema de control de la barrera.</div>
+</div>
+</div>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 11-12: Construcció Final i Millores</h4>
+<p><strong>Objectiu:</strong> Finalitzar la construcció, optimitzar el sistema i preparar la presentació.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Millores Estructurals (30')</strong>
+<p style="margin: 0;">Reforç de l'estructura mecànica. Millora estètica del prototip.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Optimització del Codi (25')</strong>
+<p style="margin: 0;">Neteja i documentació del codi. Afegir comentaris explicatius.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Proves Finals (30')</strong>
+<p style="margin: 0;">Testing exhaustiu del sistema complet. Resolució d'errors (debugging).</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Documentació (35')</strong>
+<p style="margin: 0;">Completar el dossier tècnic: esquemes, fotografies, codi font, memòria del projecte.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="timeline-item">
+<div class="session-card">
+<h4>Sessions 13-15: Presentació i Avaluació</h4>
+<p><strong>Objectiu:</strong> Presentar els projectes i realitzar l'avaluació final.</p>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">1</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Preparació Presentació (30')</strong>
+<p style="margin: 0;">Creació de suport visual (PowerPoint, vídeo demostratiu). Assaig de la presentació oral.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">2</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Presentacions (90')</strong>
+<p style="margin: 0;">Cada equip presenta el seu projecte (10-15 min): demostració en viu, explicació tècnica, dificultats trobades i solucions.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">3</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Avaluació entre Iguals (20')</strong>
+<p style="margin: 0;">Els equips avaluen els projectes dels companys segons una rúbrica establerta.</p>
+</div>
+</div>
+<div style="display: table; width: 100%; background: #f4f7fb; border: 1px solid #e2e8f0; border-left: 5px solid #667eea; margin: 15px 0; padding: 15px; border-radius: 6px; box-sizing: border-box;">
+<div style="display: table-cell; width: 50px; vertical-align: top;">
+<div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; font-size: 1.2em;">4</div>
+</div>
+<div style="display: table-cell; vertical-align: top;"><strong style="display: block; margin-bottom: 5px;">Reflexió Final (20')</strong>
+<p style="margin: 0;">Debat grupal: què hem amb après? Quines aplicacions reals té? Com podem millorar?</p>
+</div>
+</div>
+<div class="success-box"><strong>Producte final:</strong> Barrera intel·ligent funcional + Dossier tècnic + Presentació oral</div>
+</div>
+</div><p class="clearfix"></p></div>
+            </div></div></div>
+</div>
+</div>
+</article>
+</div></main><div class="nav-buttons">
+<a href="../html/metodologia.html" title="Anterior" class="nav-button nav-button-left"><span>Anterior</span></a>
+<a href="../html/materials-i-recursos.html" title="Següent" class="nav-button nav-button-right"><span>Següent</span></a>
+</div>
+<footer id="siteFooter"><div id="siteFooterContent"> <div id="packageLicense" class="cc cc-by-sa"> <p> <span class="license-label">Llicència: </span><a href="https://creativecommons.org/licenses/by-sa/4.0/" class="license">Creative Commons: Reconeixement - CompartirIgual 4.0</a></p>
+</div>
+</div></footer>
+</div>
+<p id="made-with-eXe"> <a href="https://exelearning.net/" target="_blank" rel="noopener"> <span>Creat amb eXeLearning <span>(Nova finestra)</span></span></a></p>
+</body>
+</html>
